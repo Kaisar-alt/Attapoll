@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Carteira ATTAPOLL</title>
+<style>
+:root{--bg:#e6edf8;--ink:#0b1a33;--mut:#566884;--rule:#d3ddec;--field:#fff;--well:#eef3fb;--track:#dbe5f4;--acc:#1b3fd8;--acc2:#3b6dff;--fill:#1b3fd8;--pos:#0a7d5a;--neg:#b42f1f;--hero:#1b3fd8;--hero2:#0e2796;--glow:rgba(27,63,216,.28);--bar:linear-gradient(90deg,#1b3fd8,#4a7bff);--sh:0 14px 34px -14px rgba(16,40,140,.4),0 2px 6px rgba(16,40,140,.08);
+--serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;--sans:"Avenir Next","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}
+@media(prefers-color-scheme:dark){:root{--bg:#0a1020;--ink:#e6ecf7;--mut:#93a3bd;--rule:#1f2b47;--field:#131c32;--well:#0c1529;--track:#1b2744;--acc:#3f63f0;--acc2:#5b82ff;--fill:#7f9cff;--pos:#4fd1a1;--neg:#ff9a8a;--hero:#1a34b5;--hero2:#0b1a63;--glow:rgba(91,130,255,.38);--bar:linear-gradient(90deg,#3f63f0,#8fa9ff);--sh:0 14px 34px -14px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.04)}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--sans);-webkit-font-smoothing:antialiased}
+:focus-visible{outline:3px solid #ffb703;outline-offset:2px}
+.hero{position:relative;overflow:hidden;color:#fff;padding:30px 20px 66px;border-radius:0 0 32px 32px;background:linear-gradient(160deg,var(--hero2) 0%,var(--hero) 55%,var(--acc2) 135%)}
+.hero::before,.hero::after{content:"";position:absolute;border-radius:50%;filter:blur(42px);pointer-events:none}
+.hero::before{width:270px;height:270px;right:-80px;top:-100px;background:rgba(120,165,255,.5);animation:drift 14s ease-in-out infinite alternate}
+.hero::after{width:230px;height:230px;left:-90px;bottom:-120px;background:rgba(0,200,255,.28);animation:drift 18s ease-in-out infinite alternate-reverse}
+.hero>*{position:relative;z-index:1;max-width:520px;margin-left:auto;margin-right:auto}
+.hero p{margin-top:0;margin-bottom:0}
+.rot{font-size:15px;opacity:.88;display:flex;align-items:center}
+.hero:has(#live:checked) .rot::before{content:"";width:8px;height:8px;margin-right:8px;border-radius:50%;background:#46e3b0;animation:ping 1.8s infinite}
+.hero .saldo{font:600 clamp(2.7rem,13vw,3.8rem)/1.05 var(--serif);letter-spacing:-.02em;margin:4px auto 14px;font-variant-numeric:lining-nums tabular-nums;text-shadow:0 4px 28px rgba(5,15,80,.4);transform-origin:left center}
+.cot{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px}
+.cot b{border-radius:6px;padding:1px 4px;margin:0 -4px}
+.cot small{color:inherit;opacity:.8;font-size:12px}
+.hero .dif{font-size:14px;margin:6px auto 12px;opacity:.92}
+.sw{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:14px;color:#fff;cursor:pointer}
+.sw input{appearance:none;-webkit-appearance:none;flex:none;width:46px;height:26px;min-height:0;padding:0;border-radius:999px;background:rgba(255,255,255,.28);position:relative;cursor:pointer;transition:background .25s}
+.sw input::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.sw input:checked{background:#2fbf8f}
+.sw input:checked::after{transform:translateX(20px)}
+.ghost{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:7px 14px;font:600 13px var(--sans);cursor:pointer;backdrop-filter:blur(6px);transition:background .2s,transform .2s var(--ease)}
+.ghost:hover{background:rgba(255,255,255,.3)}
+.ghost:active{transform:scale(.95)}
+main{max-width:520px;margin:0 auto;padding:0 20px 56px}
+section{padding:26px 0;border-top:1px solid var(--rule)}
+main>section:first-child{position:relative;z-index:2;margin-top:-40px;padding:18px;background:var(--field);border:0;border-radius:22px;box-shadow:var(--sh)}
+main>section:nth-child(2){border-top:0}
+h2{display:flex;align-items:center;gap:10px;font:600 18px/1.3 var(--sans);margin:0 0 14px}
+h2::before{content:"";width:4px;height:18px;border-radius:2px;background:linear-gradient(var(--acc2),var(--acc))}
+.seg{position:relative;display:grid;grid-template-columns:1fr 1fr;background:var(--track);border-radius:14px;padding:4px;margin-bottom:18px}
+.seg button{position:relative;z-index:1;border:0;background:transparent;color:var(--mut);font:600 15px var(--sans);padding:11px 8px;border-radius:10px;cursor:pointer;transition:color .25s}
+.seg button[aria-pressed=true]{background:var(--field);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.18)}
+@supports selector(:has(a)){
+.seg::before{content:"";position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:10px;background:linear-gradient(135deg,var(--acc2),var(--acc));box-shadow:0 8px 16px -6px var(--glow);transition:transform .38s var(--ease)}
+.seg:has(#m-out[aria-pressed=true])::before{transform:translateX(100%)}
+.seg button[aria-pressed=true]{background:transparent;box-shadow:none;color:#fff}}
+label{display:block;font-size:14px;color:var(--mut);margin:0 0 6px}
+.campo{margin-bottom:14px}
+#w-nota:not([hidden]),#manual:not([hidden]){animation:rise .4s var(--ease)}
+.inp{display:flex;align-items:center;background:var(--well);border:1px solid var(--rule);border-radius:14px;transition:border-color .2s,box-shadow .2s,background .2s}
+.inp:focus-within{border-color:var(--acc);box-shadow:0 0 0 4px var(--glow);background:var(--field)}
+.inp span{padding-left:14px;color:var(--mut);font-weight:600;transition:color .2s}
+.inp:focus-within span{color:var(--acc)}
+input{width:100%;min-height:50px;border:0;background:transparent;color:var(--ink);font:500 20px var(--sans);padding:8px 14px;border-radius:14px;font-variant-numeric:tabular-nums}
+input:focus-visible{outline-offset:-2px}
+.inp input:focus-visible{outline:0}
+summary{font:600 18px/1.3 var(--sans);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"";width:9px;height:9px;margin:-4px 4px 0 0;border-right:2px solid var(--acc);border-bottom:2px solid var(--acc);transform:rotate(45deg);transition:transform .3s var(--ease)}
+details[open] summary::after{transform:rotate(225deg)}
+details[open]>:not(summary){animation:rise .4s var(--ease) both}
+details p{margin:12px 0;color:var(--mut);font-size:15px}
+#chave{font-size:15px}
+#st-chave{min-height:22px;margin:12px 0 0}
+#nota{background:var(--well);border:1px solid var(--rule);font-size:16px;transition:border-color .2s,box-shadow .2s}
+#nota:focus-visible{border-color:var(--acc);box-shadow:0 0 0 4px var(--glow)}
+.prev{min-height:22px;margin:0 0 14px;font-size:15px;color:var(--mut)}
+.prev b{color:var(--ink);font-size:17px}
+.primario{position:relative;overflow:hidden;width:100%;background:linear-gradient(135deg,var(--acc2),var(--acc));color:#fff;border:0;border-radius:14px;font:700 17px var(--sans);padding:16px;cursor:pointer;box-shadow:0 12px 24px -10px var(--glow),inset 0 1px 0 rgba(255,255,255,.22);transition:transform .25s var(--ease),box-shadow .25s}
+.primario::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);transform:translateX(-120%)}
+.primario:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 18px 30px -10px var(--glow),inset 0 1px 0 rgba(255,255,255,.22)}
+.primario:hover:not(:disabled)::after{transform:translateX(120%);transition:transform .8s var(--ease)}
+.primario:active:not(:disabled){transform:scale(.985)}
+.primario:disabled{opacity:.8;cursor:wait}
+.primario:disabled::after{animation:shine 1.2s linear infinite}
+#msg{margin:12px 0 0;font-size:15px;min-height:22px;border-radius:10px}
+#msg:not(:empty){padding:9px 12px;animation:pop .35s var(--ease)}
+#msg.ok{color:var(--pos)}#msg.erro{color:var(--neg)}
+#msg.ok:not(:empty){background:color-mix(in srgb,var(--pos) 13%,transparent)}
+#msg.erro:not(:empty){background:color-mix(in srgb,var(--neg) 13%,transparent)}
+.mes{margin-bottom:16px}
+.mh{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.mh span{text-transform:capitalize}
+.mh b{font:600 19px var(--serif);font-variant-numeric:lining-nums tabular-nums}
+.bar{height:10px;background:var(--track);border-radius:6px;margin:8px 0 6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--bar);border-radius:6px;transform-origin:left;animation:grow .9s var(--ease) .15s both}
+small{color:var(--mut);font-size:13px}
+ul{list-style:none;margin:0;padding:0}
+li{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:12px 0;border-bottom:1px solid var(--rule);animation:rise .4s var(--ease) both}
+li:nth-child(2){animation-delay:.05s}li:nth-child(3){animation-delay:.1s}li:nth-child(n+4){animation-delay:.15s}
+li:last-child{border-bottom:0}
+li b{font:600 18px var(--serif);font-variant-numeric:lining-nums tabular-nums}
+.pos{color:var(--pos)}.neg{color:var(--neg)}
+li small{display:block}
+li button{grid-row:1/3;grid-column:2;align-self:center;background:transparent;border:1px solid var(--rule);color:var(--mut);border-radius:8px;padding:6px 10px;font:600 13px var(--sans);cursor:pointer;transition:color .2s,border-color .2s,background .2s}
+li button:hover{color:var(--neg);border-color:var(--neg);background:color-mix(in srgb,var(--neg) 10%,transparent)}
+.vazio{color:var(--mut);margin:0}
+.hero>*,main>section{animation:rise .7s var(--ease) both}
+.hero>:nth-child(2){animation-delay:.07s}.hero>:nth-child(3){animation-delay:.14s}.hero>:nth-child(4){animation-delay:.21s}.hero>:nth-child(5){animation-delay:.28s}
+main>section:nth-child(1){animation-delay:.2s}main>section:nth-child(2){animation-delay:.3s}main>section:nth-child(3){animation-delay:.38s}main>section:nth-child(4){animation-delay:.46s}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+@keyframes drift{to{transform:translate(-40px,30px) scale(1.15)}}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(70,227,176,.6)}70%,100%{box-shadow:0 0 0 9px rgba(70,227,176,0)}}
+@keyframes shine{to{transform:translateX(120%)}}
+@keyframes pop{from{opacity:0;transform:scale(.96) translateY(-4px)}}
+@keyframes grow{from{transform:scaleX(0)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <p class="rot" id="rot">Saldo na carteira</p>
+  <p id="saldo" class="saldo">R$ 0,00</p>
+  <p id="dif" class="dif" hidden></p>
+  <div class="cot"><span id="cot">Buscando cotação…</span><button type="button" id="b-cot" class="ghost">Atualizar</button></div>
+  <label class="sw"><input type="checkbox" id="live" role="switch"><span>Saldo acompanha a cotação</span></label>
+</header>
+
+<main>
+  <section>
+    <div class="seg">
+      <button type="button" id="m-in" aria-pressed="true">Receber dólares</button>
+      <button type="button" id="m-out" aria-pressed="false">Gastei reais</button>
+    </div>
+    <form id="f" novalidate>
+      <div class="campo">
+        <label id="l-v" for="v">Valor em dólares</label>
+        <div class="inp"><span id="pre">US$</span><input id="v" inputmode="decimal" autocomplete="off" placeholder="0,00"></div>
+      </div>
+      <div class="campo" id="w-nota" hidden>
+        <label for="nota">Em que você gastou (opcional)</label>
+        <input id="nota" maxlength="60" autocomplete="off">
+      </div>
+      <div class="campo" id="manual" hidden>
+        <label for="rman">Cotação manual (reais por dólar)</label>
+        <div class="inp"><span>R$</span><input id="rman" inputmode="decimal" placeholder="5,40"></div>
+      </div>
+      <p id="prev" class="prev" aria-live="polite"></p>
+      <button id="ok" class="primario">Converter e guardar</button>
+      <p id="msg" role="status"></p>
+    </form>
+  </section>
+
+  <section>
+    <h2>Ganhos por mês</h2>
+    <div id="meses"></div>
+  </section>
+
+  <section>
+    <h2>Movimentações</h2>
+    <ul id="hist"></ul>
+  </section>
+
+  <section>
+    <details id="det">
+      <summary>Cotação em tempo real (opcional)</summary>
+      <p>A cotação é buscada a cada 5 segundos. Sem chave, a fonte só muda uma vez por minuto. Com uma chave grátis do AwesomeAPI (cadastro em awesomeapi.com.br, 100 mil consultas por mês), ela muda na hora.</p>
+      <div class="campo">
+        <label for="chave">Sua chave</label>
+        <div class="inp"><input id="chave" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Cole a chave aqui"></div>
+      </div>
+      <button type="button" id="b-chave" class="primario">Salvar chave</button>
+      <p id="st-chave" role="status"></p>
+    </details>
+  </section>
+</main>
+
+<script>
+const TAXA = 0.038, FATOR = 1 - TAXA, KEY = 'carteira-usd-brl-v1', LIVE_KEY = 'carteira-usd-brl-ao-vivo', CHAVE_KEY = 'carteira-usd-brl-chave';
+const INTERVALO = 5000;
+const $ = id => document.getElementById(id);
+const brl = new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'});
+const brl4 = new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL', minimumFractionDigits:4, maximumFractionDigits:4});
+const usdf = new Intl.NumberFormat('pt-BR', {style:'currency', currency:'USD'});
+const r2 = n => Math.round(n * 100) / 100;
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num = s => {
+  s = String(s).trim().replace(/\s/g, '');
+  if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.');
+  const n = Number(s);
+  return s !== '' && isFinite(n) ? n : NaN;
+};
+
+let dados = [];
+try { dados = JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) {}
+const salvar = () => { try { localStorage.setItem(KEY, JSON.stringify(dados)); } catch (e) {} };
+
+let chave = '';
+try { chave = (localStorage.getItem(CHAVE_KEY) || '').trim(); } catch (e) {}
+
+let cotacao = null, cotHora = null, modo = 'in', sentido = 0, falhou = false, fonteAtual = '', buscando = false;
+
+const calc = (usd, cot) => {
+  const bruto = r2(usd * cot), liq = r2(usd * cot * (1 - TAXA));
+  return {bruto, taxa: r2(bruto - liq), liq};
+};
+const saldo = () => r2(dados.reduce((s, x) => s + (x.t === 'in' ? x.v : -x.v), 0));
+
+// Modo ao vivo: a carteira vira "dólares guardados" e o valor em reais acompanha a cotação,
+// já com a taxa de 3,8% (quanto você receberia se convertesse agora).
+const usdNaCarteira = () => {
+  const ins = dados.filter(x => x.t === 'in');
+  const usd = ins.reduce((s, x) => s + x.usd, 0), liq = ins.reduce((s, x) => s + x.v, 0);
+  const media = usd > 0 ? liq / usd : 0; // reais líquidos por dólar, na média do que foi guardado
+  return dados.reduce((s, x) => x.t === 'in' ? s + x.usd : s - (x.usdEq != null ? x.usdEq : (media ? x.v / media : 0)), 0);
+};
+const saldoVivo = () => cotacao ? r2(usdNaCarteira() * cotacao * FATOR) : null;
+const aoVivo = () => $('live').checked;
+const saldoExibido = () => { const v = aoVivo() ? saldoVivo() : null; return v === null ? saldo() : v; };
+const aviso = (t, ok) => { const m = $('msg'); m.textContent = t || ''; m.className = ok ? 'ok' : 'erro'; };
+
+async function buscarCotacao() {
+  const opt = () => ({cache: 'no-store', signal: AbortSignal.timeout ? AbortSignal.timeout(8000) : undefined});
+  const awesome = async token => {
+    const url = 'https://economia.awesomeapi.com.br/json/last/USD-BRL' + (token ? '?token=' + encodeURIComponent(token) : '');
+    const r = await fetch(url, opt());
+    if (!r.ok) throw new Error('http ' + r.status);
+    return parseFloat((await r.json()).USDBRL.bid);
+  };
+  const fontes = [
+    ...(chave ? [['chave', () => awesome(chave)]] : []),
+    ['awesome', () => awesome('')],
+    ['reserva', async () => Number((await (await fetch('https://open.er-api.com/v6/latest/USD', opt())).json()).rates.BRL)]
+  ];
+  for (const [nome, f] of fontes) {
+    try { const v = await f(); if (isFinite(v) && v > 0) { fonteAtual = nome; return v; } } catch (e) {}
+  }
+  return null;
+}
+
+function aplicarCot(c) {
+  if (cotacao !== null && c !== cotacao) sentido = c > cotacao ? 1 : -1;
+  cotacao = c; cotHora = new Date(); falhou = false;
+}
+
+function pintarCot() {
+  if (!cotacao) { $('cot').textContent = 'Cotação indisponível. Toque em Atualizar.'; return; }
+  const hora = cotHora.toLocaleTimeString('pt-BR');
+  const seta = sentido > 0 ? ' ▲' : sentido < 0 ? ' ▼' : '';
+  let nota = falhou ? `sem conexão, última cotação às ${hora}` : `atualizada às ${hora}`;
+  if (!falhou && fonteAtual === 'reserva') nota += ', fonte reserva (menos precisa)';
+  $('cot').innerHTML = `1 dólar = <b>${brl4.format(cotacao)}</b>${seta}<br><small>${nota}</small>`;
+}
+
+async function atualizar(manual) {
+  if (buscando) return;
+  buscando = true;
+  if (manual === true || !cotacao) $('cot').textContent = 'Buscando cotação…';
+  const c = await buscarCotacao();
+  if (c) aplicarCot(c); else falhou = true;
+  buscando = false;
+  pintarCot();
+  pintarSaldo();
+  previa();
+}
+
+function pintarChave(msg) {
+  $('chave').value = chave;
+  $('st-chave').textContent = msg !== undefined ? msg
+    : chave ? (fonteAtual === 'chave' ? 'Chave funcionando: cotação em tempo real.' : 'Chave salva. Aguardando a próxima cotação para testar.')
+    : 'Sem chave: a cotação muda no máximo uma vez por minuto.';
+}
+
+function previa() {
+  const u = num($('v').value);
+  if (modo !== 'in' || !cotacao || !(u > 0)) { $('prev').textContent = ''; return; }
+  const c = calc(u, cotacao);
+  $('prev').innerHTML = `Bruto ${brl.format(c.bruto)}, taxa de 3,8% ${brl.format(c.taxa)}. Você recebe <b>${brl.format(c.liq)}</b>.`;
+}
+
+function setModo(m) {
+  modo = m;
+  $('m-in').setAttribute('aria-pressed', m === 'in');
+  $('m-out').setAttribute('aria-pressed', m === 'out');
+  $('l-v').textContent = m === 'in' ? 'Valor em dólares' : 'Valor em reais';
+  $('pre').textContent = m === 'in' ? 'US$' : 'R$';
+  $('w-nota').hidden = m === 'in';
+  $('manual').hidden = true;
+  $('ok').textContent = m === 'in' ? 'Converter e guardar' : 'Tirar da carteira';
+  $('v').value = '';
+  previa();
+  aviso('');
+}
+
+function pintarSaldo() {
+  const on = aoVivo(), v = on ? saldoVivo() : null;
+  $('saldo').textContent = brl.format(v === null ? saldo() : v);
+  $('rot').textContent = on ? 'Saldo na carteira, ao vivo' : 'Saldo na carteira';
+  const d = $('dif');
+  if (!on) { d.hidden = true; return; }
+  d.hidden = false;
+  if (v === null) { d.textContent = 'Sem cotação agora, mostrando o valor guardado.'; return; }
+  const dif = r2(v - saldo());
+  d.textContent = dif === 0 ? 'Igual ao valor guardado'
+    : `${dif > 0 ? '▲' : '▼'} ${brl.format(Math.abs(dif))} ${dif > 0 ? 'acima' : 'abaixo'} do valor guardado`;
+}
+
+function render() {
+  pintarSaldo();
+
+  const m = {};
+  for (const x of dados) {
+    if (x.t !== 'in') continue;
+    const d = new Date(x.d), k = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    m[k] = m[k] || {usd: 0, brl: 0};
+    m[k].usd += x.usd; m[k].brl += x.v;
+  }
+  const ks = Object.keys(m).sort().reverse();
+  const max = Math.max(1, ...ks.map(k => m[k].brl));
+  $('meses').innerHTML = ks.length ? ks.map(k => {
+    const [y, mo] = k.split('-');
+    const nome = new Date(y, mo - 1, 1).toLocaleDateString('pt-BR', {month:'long', year:'numeric'});
+    return `<div class="mes"><div class="mh"><span>${nome}</span><b>${brl.format(r2(m[k].brl))}</b></div>
+      <div class="bar"><i style="width:${Math.max(2, Math.round(m[k].brl / max * 100))}%"></i></div>
+      <small>${usdf.format(r2(m[k].usd))} recebidos, já com a taxa descontada</small></div>`;
+  }).join('') : '<p class="vazio">Nenhum recebimento ainda. Digite um valor em dólares e toque em Converter e guardar.</p>';
+
+  const h = [...dados].sort((a, b) => b.id - a.id);
+  $('hist').innerHTML = h.length ? h.map(x => {
+    const dt = new Date(x.d).toLocaleString('pt-BR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
+    const rm = `<button type="button" data-id="${x.id}" aria-label="Remover movimentação">Remover</button>`;
+    return x.t === 'in'
+      ? `<li><div><b class="pos">+ ${brl.format(x.v)}</b><small>${usdf.format(x.usd)} a ${brl4.format(x.cot)}${x.man ? ' (cotação manual)' : ''}, taxa de ${brl.format(x.taxa)}</small><small>${dt}</small></div>${rm}</li>`
+      : `<li><div><b class="neg">− ${brl.format(x.v)}</b><small>${x.n ? esc(x.n) : 'Gasto'}</small><small>${dt}</small></div>${rm}</li>`;
+  }).join('') : '<p class="vazio">Nada por aqui ainda.</p>';
+}
+
+$('f').onsubmit = async e => {
+  e.preventDefault();
+  const v = num($('v').value);
+  if (!(v > 0)) {
+    aviso(modo === 'in' ? 'Digite quantos dólares você recebeu, por exemplo 150,00.' : 'Digite quantos reais você gastou, por exemplo 80,00.');
+    return;
+  }
+  if (modo === 'out') {
+    const s = saldoExibido();
+    if (v > s + 0.001) { aviso(`Saldo insuficiente: a carteira tem ${brl.format(s)}. Digite um valor menor.`); return; }
+    const usdEq = cotacao ? v / (cotacao * FATOR) : undefined; // quantos dólares esse gasto representa agora
+    dados.push({id: Date.now(), t: 'out', d: new Date().toISOString(), v: r2(v), usdEq, n: $('nota').value.trim()});
+    $('v').value = ''; $('nota').value = '';
+    salvar(); render(); aviso(`Retirado: ${brl.format(r2(v))}`, true);
+    return;
+  }
+  $('ok').disabled = true;
+  aviso('Buscando a cotação…', true);
+  let cot = cotacao && Date.now() - cotHora < 15000 && !falhou ? cotacao : null, man = false;
+  if (!cot) {
+    cot = await buscarCotacao();
+    if (cot) { aplicarCot(cot); pintarCot(); }
+  }
+  if (cot) {
+    $('manual').hidden = true;
+  } else {
+    const mv = num($('rman').value);
+    $('manual').hidden = false;
+    if (!(mv > 0)) {
+      aviso('Não consegui buscar a cotação. Digite a cotação manual acima e toque em Converter e guardar de novo.');
+      $('ok').disabled = false;
+      return;
+    }
+    cot = mv; man = true;
+  }
+  const c = calc(v, cot);
+  dados.push({id: Date.now(), t: 'in', d: new Date().toISOString(), usd: v, cot, bruto: c.bruto, taxa: c.taxa, v: c.liq, man});
+  $('v').value = ''; previa();
+  salvar(); render();
+  aviso(`Guardado: ${brl.format(c.liq)} (cotação ${brl.format(cot)})`, true);
+  $('ok').disabled = false;
+};
+
+$('hist').onclick = e => {
+  const b = e.target.closest('button[data-id]');
+  if (!b) return;
+  if (confirm('Remover esta movimentação? O saldo será recalculado.')) {
+    dados = dados.filter(x => String(x.id) !== b.dataset.id);
+    salvar(); render();
+  }
+};
+$('m-in').onclick = () => setModo('in');
+$('m-out').onclick = () => setModo('out');
+$('b-cot').onclick = () => atualizar(true);
+$('v').oninput = previa;
+$('live').onchange = () => {
+  try { localStorage.setItem(LIVE_KEY, aoVivo() ? '1' : '0'); } catch (e) {}
+  pintarSaldo();
+};
+$('b-chave').onclick = async () => {
+  chave = $('chave').value.trim();
+  try { chave ? localStorage.setItem(CHAVE_KEY, chave) : localStorage.removeItem(CHAVE_KEY); } catch (e) {}
+  if (!chave) { fonteAtual = ''; pintarChave('Chave removida.'); atualizar(true); return; }
+  pintarChave('Testando a chave…');
+  buscando = false;
+  await atualizar(true);
+  pintarChave(fonteAtual === 'chave' ? undefined : 'Não consegui usar essa chave. Confira se copiou inteira e tente de novo.');
+};
+
+try { $('live').checked = localStorage.getItem(LIVE_KEY) === '1'; } catch (e) {}
+setModo('in');
+render();
+pintarChave();
+atualizar();
+setInterval(() => { if (!document.hidden) atualizar(); }, INTERVALO);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) atualizar(); });
+window.addEventListener('online', () => atualizar());
+
+// ===== Animações (só visual; não altera a lógica acima) =====
+(() => {
+  const reduz = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ler = t => Number(t.replace(/[^\d,-]/g, '').replace(',', '.'));
+  const el = $('saldo');
+  let atual = 0, escrito = el.textContent, raf = 0;
+  const animar = (alvo, texto) => {
+    if (reduz || !isFinite(alvo) || alvo === atual) { atual = alvo; return; }
+    cancelAnimationFrame(raf);
+    const ini = atual, t0 = performance.now();
+    if (el.animate) el.animate([{transform:'scale(1)'},{transform:'scale(1.04)'},{transform:'scale(1)'}], {duration:600, easing:'ease-out'});
+    const passo = t => {
+      const p = Math.min(1, (t - t0) / 800), e = 1 - Math.pow(1 - p, 3);
+      atual = p === 1 ? alvo : ini + (alvo - ini) * e;
+      escrito = p === 1 ? texto : brl.format(atual);
+      el.textContent = escrito;
+      if (p < 1) raf = requestAnimationFrame(passo);
+    };
+    raf = requestAnimationFrame(passo);
+  };
+  new MutationObserver(() => {
+    if (el.textContent === escrito) return;
+    animar(ler(el.textContent), el.textContent);
+  }).observe(el, {childList: true, characterData: true, subtree: true});
+  animar(ler(el.textContent), el.textContent);
+
+  // Pisca a cotação quando o valor muda
+  const cot = $('cot'); let ult = '';
+  new MutationObserver(() => {
+    const b = cot.querySelector('b'), v = b ? b.textContent : '';
+    if (v && ult && v !== ult && !reduz && b.animate) b.animate([{background:'rgba(255,255,255,.4)'},{background:'rgba(255,255,255,0)'}], {duration:900});
+    if (v) ult = v;
+  }).observe(cot, {childList: true});
+})();
+</script>
+</body>
+</html>
