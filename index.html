@@ -59,14 +59,6 @@ label{display:block;font-size:14px;color:var(--mut);margin:0 0 6px}
 input{width:100%;min-height:50px;border:0;background:transparent;color:var(--ink);font:500 20px var(--sans);padding:8px 14px;border-radius:14px;font-variant-numeric:tabular-nums}
 input:focus-visible{outline-offset:-2px}
 .inp input:focus-visible{outline:0}
-summary{font:600 18px/1.3 var(--sans);cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
-summary::-webkit-details-marker{display:none}
-summary::after{content:"";width:9px;height:9px;margin:-4px 4px 0 0;border-right:2px solid var(--acc);border-bottom:2px solid var(--acc);transform:rotate(45deg);transition:transform .3s var(--ease)}
-details[open] summary::after{transform:rotate(225deg)}
-details[open]>:not(summary){animation:rise .4s var(--ease) both}
-details p{margin:12px 0;color:var(--mut);font-size:15px}
-#chave{font-size:15px}
-#st-chave{min-height:22px;margin:12px 0 0}
 #nota{background:var(--well);border:1px solid var(--rule);font-size:16px;transition:border-color .2s,box-shadow .2s}
 #nota:focus-visible{border-color:var(--acc);box-shadow:0 0 0 4px var(--glow)}
 .prev{min-height:22px;margin:0 0 14px;font-size:15px;color:var(--mut)}
@@ -114,7 +106,7 @@ li button[data-mv]:hover{color:var(--acc);border-color:var(--acc);background:col
 .vazio{color:var(--mut);margin:0}
 .hero>*,main>section{animation:rise .7s var(--ease) both}
 .hero>:nth-child(2){animation-delay:.07s}.hero>:nth-child(3){animation-delay:.14s}.hero>:nth-child(4){animation-delay:.21s}.hero>:nth-child(5){animation-delay:.28s}
-main>section:nth-child(1){animation-delay:.2s}main>section:nth-child(2){animation-delay:.3s}main>section:nth-child(3){animation-delay:.38s}main>section:nth-child(4){animation-delay:.46s}main>section:nth-child(5){animation-delay:.54s}
+main>section:nth-child(1){animation-delay:.2s}main>section:nth-child(2){animation-delay:.3s}main>section:nth-child(3){animation-delay:.38s}main>section:nth-child(4){animation-delay:.46s}main>section:nth-child(5){animation-delay:.54s}main>section:nth-child(6){animation-delay:.62s}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}}
 @keyframes drift{to{transform:translate(-40px,30px) scale(1.15)}}
 @keyframes ping{0%{box-shadow:0 0 0 0 rgba(70,227,176,.6)}70%,100%{box-shadow:0 0 0 9px rgba(70,227,176,0)}}
@@ -169,12 +161,31 @@ li:hover{padding-left:12px;background:linear-gradient(90deg,rgba(60,120,255,.12)
 @keyframes idle{0%,60%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
 @keyframes bsh{from{background-position:200% 0}to{background-position:-100% 0}}
 @keyframes rp{to{transform:scale(1);opacity:0}}
+/* ===== Patrimônio e apagar tudo (itens novos, mesmo estilo) ===== */
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stat{background:rgba(6,12,28,.9);border:1px solid rgba(90,140,255,.2);border-radius:14px;padding:12px}
+.stat small{display:block;margin-bottom:4px;line-height:1.3;font-size:12px}
+.stat b{display:block;font:600 clamp(14px,4vw,17px)/1.25 var(--serif);font-variant-numeric:lining-nums tabular-nums;overflow-wrap:anywhere}
+#r-in{color:var(--pos)}#r-out{color:var(--neg)}#r-sep{color:var(--mut)}
+.nota-resumo{margin:12px 0 0;font-size:13px;color:var(--mut)}
+.head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.head h2{margin:0}
+.apagar{position:relative;overflow:hidden;background:transparent;border:1px solid var(--rule);color:var(--mut);border-radius:8px;padding:6px 12px;font:600 13px var(--sans);cursor:pointer;transition:color .2s,border-color .2s,background .2s,transform .2s var(--ease)}
+.apagar:hover{color:var(--neg);border-color:var(--neg);background:color-mix(in srgb,var(--neg) 10%,transparent)}
+.apagar:active{transform:scale(.95)}
+.confirm{background:rgba(8,16,38,.85);border:1px solid rgba(90,140,255,.28);border-radius:14px;padding:14px;margin-bottom:12px;animation:rise .4s var(--ease)}
+.confirm p{margin:0 0 12px;font-size:15px;color:var(--mut)}
+.confirm .duo .sec,.confirm .duo .perigo{padding:13px 8px;font-size:15px}
+.perigo{position:relative;overflow:hidden;background:color-mix(in srgb,var(--neg) 14%,transparent);color:var(--neg);border:1px solid var(--neg);border-radius:14px;font:700 17px var(--sans);padding:16px;cursor:pointer;transition:transform .25s var(--ease),background .2s}
+.perigo:hover{background:color-mix(in srgb,var(--neg) 24%,transparent)}
+.perigo:active{transform:scale(.985)}
 </style>
 </head>
 <body>
 <header class="hero">
-  <p class="rot" id="rot">Saldo na carteira</p>
+  <p class="rot" id="rot">Patrimônio total</p>
   <p id="saldo" class="saldo">R$ 0,00</p>
+  <p class="dif">Somente o dinheiro que está na carteira</p>
   <p id="dif" class="dif" hidden></p>
   <p id="sep" class="dif" hidden></p>
   <div class="cot"><span id="cot">Buscando cotação…</span><button type="button" id="b-cot" class="ghost">Atualizar</button></div>
@@ -215,6 +226,16 @@ li:hover{padding-left:12px;background:linear-gradient(90deg,rgba(60,120,255,.12)
   </section>
 
   <section>
+    <h2>Resumo do patrimônio</h2>
+    <div class="stats">
+      <div class="stat"><small>Entrou na carteira</small><b id="r-in">R$ 0,00</b></div>
+      <div class="stat"><small>Saiu da carteira</small><b id="r-out">R$ 0,00</b></div>
+      <div class="stat"><small>Separado (não conta)</small><b id="r-sep">R$ 0,00</b></div>
+    </div>
+    <p class="nota-resumo">O patrimônio soma só o que está na carteira e se ajusta sozinho quando você remove ou separa uma movimentação.</p>
+  </section>
+
+  <section>
     <h2>Minha carteira em reais</h2>
     <div class="campo">
       <label for="cv">Valor em reais</label>
@@ -233,26 +254,24 @@ li:hover{padding-left:12px;background:linear-gradient(90deg,rgba(60,120,255,.12)
   </section>
 
   <section>
-    <h2>Movimentações</h2>
+    <div class="head">
+      <h2>Movimentações</h2>
+      <button type="button" id="b-clear" class="apagar" hidden>Apagar tudo</button>
+    </div>
+    <div id="clear-box" class="confirm" hidden>
+      <p id="clear-txt"></p>
+      <div class="duo">
+        <button type="button" id="clear-no" class="sec">Cancelar</button>
+        <button type="button" id="clear-yes" class="perigo">Sim, apagar</button>
+      </div>
+    </div>
     <ul id="hist"></ul>
   </section>
 
-  <section>
-    <details id="det">
-      <summary>Cotação em tempo real (opcional)</summary>
-      <p>A cotação é buscada a cada 5 segundos. Sem chave, a fonte só muda uma vez por minuto. Com uma chave grátis do AwesomeAPI (cadastro em awesomeapi.com.br, 100 mil consultas por mês), ela muda na hora.</p>
-      <div class="campo">
-        <label for="chave">Sua chave</label>
-        <div class="inp"><input id="chave" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Cole a chave aqui"></div>
-      </div>
-      <button type="button" id="b-chave" class="primario">Salvar chave</button>
-      <p id="st-chave" role="status"></p>
-    </details>
-  </section>
 </main>
 
 <script>
-const TAXA = 0.038, FATOR = 1 - TAXA, KEY = 'carteira-usd-brl-v1', LIVE_KEY = 'carteira-usd-brl-ao-vivo', CHAVE_KEY = 'carteira-usd-brl-chave';
+const TAXA = 0.038, FATOR = 1 - TAXA, KEY = 'carteira-usd-brl-v1', LIVE_KEY = 'carteira-usd-brl-ao-vivo';
 const INTERVALO = 5000;
 const $ = id => document.getElementById(id);
 const brl = new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'});
@@ -270,9 +289,6 @@ const num = s => {
 let dados = [];
 try { dados = JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) {}
 const salvar = () => { try { localStorage.setItem(KEY, JSON.stringify(dados)); } catch (e) {} };
-
-let chave = '';
-try { chave = (localStorage.getItem(CHAVE_KEY) || '').trim(); } catch (e) {}
 
 let pend = null, cotacao = null, cotHora = null, modo = 'in', sentido = 0, falhou = false, fonteAtual = '', buscando = false;
 
@@ -320,7 +336,6 @@ async function buscarCotacao() {
     return parseFloat((await r.json()).USDBRL.bid);
   };
   const fontes = [
-    ...(chave ? [['chave', () => awesome(chave)]] : []),
     ['awesome', () => awesome('')],
     ['reserva', async () => Number((await (await fetch('https://open.er-api.com/v6/latest/USD', opt())).json()).rates.BRL)]
   ];
@@ -356,13 +371,6 @@ async function atualizar(manual) {
   previa();
 }
 
-function pintarChave(msg) {
-  $('chave').value = chave;
-  $('st-chave').textContent = msg !== undefined ? msg
-    : chave ? (fonteAtual === 'chave' ? 'Chave funcionando: cotação em tempo real.' : 'Chave salva. Aguardando a próxima cotação para testar.')
-    : 'Sem chave: a cotação muda no máximo uma vez por minuto.';
-}
-
 function previa() {
   const u = num($('v').value);
   if (modo !== 'in' || !cotacao || !(u > 0)) { $('prev').textContent = ''; return; }
@@ -396,8 +404,8 @@ function pintarSaldo() {
   $('saldo').textContent = brl.format(v === null ? saldo() : v);
   const sp = separado();
   $('sep').hidden = !(sp > 0);
-  $('sep').textContent = `Separado, fora da carteira: ${brl.format(sp)}`;
-  $('rot').textContent = on ? 'Saldo na carteira, ao vivo' : 'Saldo na carteira';
+  $('sep').textContent = `Separado, fora do patrimônio: ${brl.format(sp)}`;
+  $('rot').textContent = on ? 'Patrimônio total, ao vivo' : 'Patrimônio total';
   const d = $('dif');
   if (!on) { d.hidden = true; return; }
   d.hidden = false;
@@ -409,6 +417,18 @@ function pintarSaldo() {
 
 function render() {
   pintarSaldo();
+
+  // Resumo do patrimônio: recalculado a cada mudança (remover, separar, apagar tudo...)
+  const ent = r2(dados.reduce((s, x) => (x.t === 'dep' || naCart(x)) ? s + x.v : s, 0));
+  const sai = r2(dados.filter(x => x.t === 'out').reduce((s, x) => s + x.v, 0));
+  $('r-in').textContent = brl.format(ent);
+  $('r-out').textContent = brl.format(sai);
+  $('r-sep').textContent = brl.format(separado());
+
+  // Botão "Apagar tudo" só aparece quando há movimentações
+  const tem = dados.length > 0;
+  $('b-clear').hidden = !tem;
+  if (!tem) $('clear-box').hidden = true;
 
   const m = {};
   for (const x of dados) {
@@ -529,11 +549,26 @@ $('hist').onclick = e => {
   }
   const b = e.target.closest('button[data-id]');
   if (!b) return;
-  if (confirm('Remover esta movimentação? O saldo será recalculado.')) {
+  if (confirm('Remover esta movimentação? O patrimônio será recalculado.')) {
     dados = dados.filter(x => String(x.id) !== b.dataset.id);
     salvar(); render();
   }
 };
+// Apagar todas as movimentações de uma vez (com confirmação)
+$('b-clear').onclick = () => {
+  const n = dados.length;
+  if (!n) return;
+  $('clear-txt').textContent = `Apagar ${n === 1 ? 'a única movimentação' : 'todas as ' + n + ' movimentações'}? O patrimônio volta para R$ 0,00 e isso não pode ser desfeito.`;
+  $('clear-box').hidden = false;
+};
+$('clear-no').onclick = () => { $('clear-box').hidden = true; };
+$('clear-yes').onclick = () => {
+  dados = [];
+  salvar();
+  $('clear-box').hidden = true;
+  render();
+};
+
 $('m-in').onclick = () => setModo('in');
 $('m-out').onclick = () => setModo('out');
 $('b-cot').onclick = () => atualizar(true);
@@ -542,20 +577,10 @@ $('live').onchange = () => {
   try { localStorage.setItem(LIVE_KEY, aoVivo() ? '1' : '0'); } catch (e) {}
   pintarSaldo();
 };
-$('b-chave').onclick = async () => {
-  chave = $('chave').value.trim();
-  try { chave ? localStorage.setItem(CHAVE_KEY, chave) : localStorage.removeItem(CHAVE_KEY); } catch (e) {}
-  if (!chave) { fonteAtual = ''; pintarChave('Chave removida.'); atualizar(true); return; }
-  pintarChave('Testando a chave…');
-  buscando = false;
-  await atualizar(true);
-  pintarChave(fonteAtual === 'chave' ? undefined : 'Não consegui usar essa chave. Confira se copiou inteira e tente de novo.');
-};
 
 try { $('live').checked = localStorage.getItem(LIVE_KEY) === '1'; } catch (e) {}
 setModo('in');
 render();
-pintarChave();
 atualizar();
 setInterval(() => { if (!document.hidden) atualizar(); }, INTERVALO);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) atualizar(); });
@@ -600,7 +625,7 @@ window.addEventListener('online', () => atualizar());
 // ===== Efeitos visuais extras (não mexem na lógica) =====
 (() => {
   document.addEventListener('pointerdown', e => {
-    const b = e.target.closest('.primario,.sec,.ghost,.seg button');
+    const b = e.target.closest('.primario,.sec,.perigo,.ghost,.seg button');
     if (!b || b.disabled) return;
     const r = b.getBoundingClientRect(), m = Math.max(r.width, r.height) * 2, s = document.createElement('span');
     s.className = 'rp';
