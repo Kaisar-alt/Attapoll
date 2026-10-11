@@ -179,6 +179,7 @@ li:hover{padding-left:12px;background:linear-gradient(90deg,rgba(60,120,255,.12)
 .perigo{position:relative;overflow:hidden;background:color-mix(in srgb,var(--neg) 14%,transparent);color:var(--neg);border:1px solid var(--neg);border-radius:14px;font:700 17px var(--sans);padding:16px;cursor:pointer;transition:transform .25s var(--ease),background .2s}
 .perigo:hover{background:color-mix(in srgb,var(--neg) 24%,transparent)}
 .perigo:active{transform:scale(.985)}
+.cot .up{color:var(--pos)}.cot .down{color:var(--neg)}.cot .eq{opacity:.5}
 </style>
 </head>
 <body>
@@ -271,7 +272,7 @@ li:hover{padding-left:12px;background:linear-gradient(90deg,rgba(60,120,255,.12)
 </main>
 
 <script>
-const TAXA = 0.038, FATOR = 1 - TAXA, KEY = 'carteira-usd-brl-v1', LIVE_KEY = 'carteira-usd-brl-ao-vivo';
+const TAXA = 0.038, FATOR = 1 - TAXA, KEY = 'carteira-usd-brl-v1', LIVE_KEY = 'carteira-usd-brl-ao-vivo', ULT_KEY = 'carteira-usd-brl-ultima';
 const INTERVALO = 5000;
 const $ = id => document.getElementById(id);
 const brl = new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'});
@@ -291,6 +292,13 @@ try { dados = JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) {}
 const salvar = () => { try { localStorage.setItem(KEY, JSON.stringify(dados)); } catch (e) {} };
 
 let pend = null, cotacao = null, cotHora = null, modo = 'in', sentido = 0, falhou = false, fonteAtual = '', buscando = false;
+
+// Última cotação guardada: serve de comparação para a setinha já na primeira busca ao abrir a página
+let ref = null;
+try {
+  const u = JSON.parse(localStorage.getItem(ULT_KEY));
+  if (u && u.v > 0) { ref = u.v; sentido = u.s > 0 ? 1 : u.s < 0 ? -1 : 0; }
+} catch (e) {}
 
 const calc = (usd, cot) => {
   const bruto = r2(usd * cot), liq = r2(usd * cot * (1 - TAXA));
@@ -346,14 +354,18 @@ async function buscarCotacao() {
 }
 
 function aplicarCot(c) {
-  if (cotacao !== null && c !== cotacao) sentido = c > cotacao ? 1 : -1;
+  const base = cotacao !== null ? cotacao : ref;
+  if (base !== null && c !== base) sentido = c > base ? 1 : -1;
   cotacao = c; cotHora = new Date(); falhou = false;
+  try { localStorage.setItem(ULT_KEY, JSON.stringify({v: c, s: sentido})); } catch (e) {}
 }
 
 function pintarCot() {
   if (!cotacao) { $('cot').textContent = 'Cotação indisponível. Toque em Atualizar.'; return; }
   const hora = cotHora.toLocaleTimeString('pt-BR');
-  const seta = sentido > 0 ? ' ▲' : sentido < 0 ? ' ▼' : '';
+  const seta = sentido > 0 ? ' <span class="up" title="Subiu desde a cotação anterior">▲</span>'
+    : sentido < 0 ? ' <span class="down" title="Caiu desde a cotação anterior">▼</span>'
+    : ' <span class="eq" title="Sem variação desde a cotação anterior">▬</span>';
   let nota = falhou ? `sem conexão, última cotação às ${hora}` : `atualizada às ${hora}`;
   if (!falhou && fonteAtual === 'reserva') nota += ', fonte reserva (menos precisa)';
   $('cot').innerHTML = `1 dólar = <b>${brl4.format(cotacao)}</b>${seta}<br><small>${nota}</small>`;
